@@ -218,20 +218,20 @@
                     db = firebase.getFirestore(app);
                     auth = firebase.getAuth(app);
                     firebase.setLogLevel('debug');
-
-                    if (initialAuthToken) {
-                        await firebase.signInWithCustomToken(auth, initialAuthToken);
-                    } else {
-                        await firebase.signInAnonymously(auth);
-                    }
-
-                    firebase.onAuthStateChanged(auth, (user) => {
-                        if (user) {
-                            userId = user.uid;
-                            setupRealtimeListener();
-                        }
-                    });
                 }
+
+                if (initialAuthToken) {
+                    await firebase.signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await firebase.signInAnonymously(auth);
+                }
+
+                firebase.onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        setupRealtimeListener();
+                    }
+                });
             } catch (error) {
                 console.error("Firebase initialization or authentication failed:", error);
             }
@@ -543,5 +543,6 @@
     </script>
 </body>
 </html>
+
 
 
