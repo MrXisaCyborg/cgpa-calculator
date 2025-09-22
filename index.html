@@ -210,6 +210,32 @@
         document.addEventListener('DOMContentLoaded', () => {
             addSemester();
         });
+        
+        function createSubjectHtml(semesterNumber, subjectNumber) {
+            return `
+                <div class="input-group">
+                    <div class="input-item">
+                        <label>Credits</label>
+                        <input type="number" class="w-full credits-input" value="4" min="1" max="10" data-semester="${semesterNumber}" data-subject="${subjectNumber}">
+                    </div>
+                    <div class="input-item">
+                        <label>Grade</label>
+                        <select class="w-full grade-select" data-semester="${semesterNumber}" data-subject="${subjectNumber}">
+                            <option value="O">O (10)</option>
+                            <option value="A+">A+ (9)</option>
+                            <option value="A">A (8)</option>
+                            <option value="B+">B+ (7)</option>
+                            <option value="B">B (6)</option>
+                            <option value="C">C (5)</option>
+                            <option value="F">F (0)</option>
+                        </select>
+                    </div>
+                    <button type="button" class="remove-subject-btn btn-remove font-medium self-end">
+                        &times;
+                    </button>
+                </div>
+            `;
+        }
 
         function showToast(message) {
             toastDiv.textContent = message;
@@ -311,32 +337,6 @@
                 </div>
             `;
         }
-
-        function createSubjectHtml(semesterNumber, subjectNumber) {
-            return `
-                <div class="input-group">
-                    <div class="input-item">
-                        <label>Credits</label>
-                        <input type="number" class="w-full credits-input" value="4" min="1" max="10" data-semester="${semesterNumber}" data-subject="${subjectNumber}">
-                    </div>
-                    <div class="input-item">
-                        <label>Grade</label>
-                        <select class="w-full grade-select" data-semester="${semesterNumber}" data-subject="${subjectNumber}">
-                            <option value="O">O (10)</option>
-                            <option value="A+">A+ (9)</option>
-                            <option value="A">A (8)</option>
-                            <option value="B+">B+ (7)</option>
-                            <option value="B">B (6)</option>
-                            <option value="C">C (5)</option>
-                            <option value="F">F (0)</option>
-                        </select>
-                    </div>
-                    <button type="button" class="remove-subject-btn btn-remove font-medium self-end">
-                        &times;
-                    </button>
-                </div>
-            `;
-        }
         
         function addSemester() {
             semesterCount++;
@@ -374,7 +374,28 @@
                 document.getElementById(`semester-${semesterNumber}`).remove();
                 showToast(`Semester ${semesterNumber} deleted.`);
                 calculateCGPA();
+                // If there are no semesters left, re-add one
+                if (semestersContainer.children.length === 0) {
+                    semesterCount = 0;
+                    addSemester();
+                } else {
+                    // Renumber remaining semesters
+                    renumberSemesters();
+                }
             }
+        }
+
+        function renumberSemesters() {
+            const semesterSections = semestersContainer.querySelectorAll('.section-box');
+            semesterSections.forEach((section, index) => {
+                const newNumber = index + 1;
+                section.id = `semester-${newNumber}`;
+                section.querySelector('h2').textContent = `Semester ${newNumber}`;
+                const subjectInputs = section.querySelectorAll('.credits-input, .grade-select');
+                subjectInputs.forEach(input => {
+                    input.dataset.semester = newNumber;
+                });
+            });
         }
         
         addSemesterBtn.addEventListener('click', addSemester);
@@ -419,6 +440,7 @@
     </script>
 </body>
 </html>
+
 
 
 
