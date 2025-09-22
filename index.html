@@ -509,11 +509,10 @@
             });
             
             document.body.addEventListener('input', (event) => {
-                if (event.target.classList.contains('credits-input') || event.target.classList.contains('grade-select')) {
-                    const semesterElement = event.target.closest('[id^="semester-"]');
+                const semesterElement = event.target.closest('.section-box');
+                if (semesterElement && (event.target.classList.contains('credits-input') || event.target.classList.contains('grade-select'))) {
                     const semesterNumber = semesterElement.id.split('-')[1];
                     updateSemesterData(semesterNumber);
-                    calculateCGPA();
                     
                     if (event.target.classList.contains('grade-select') && event.target.value === 'F') {
                         showAlertDialog('You have a back. Please focus on your studies! All the Best!');
@@ -543,6 +542,7 @@
     </script>
 </body>
 </html>
+
 
 
 
